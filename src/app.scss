@@ -1,0 +1,159 @@
+.header {
+  display: flex;
+  // align-items: center;
+  // min-height: 50px;
+  // padding: 0.5rem 1rem;
+  background-color: #1e2334;
+  color: #fcffeb;
+  // margin-bottom: 1rem;
+}
+
+.icon {
+  height: 40px;
+  width: 40px;
+  margin: 7.5px 10px 5px 10px;
+}
+
+.header a {
+  color: #fcffeb;
+  text-decoration: none;
+}
+
+.header-title {
+  margin: 5px 10px 5px 10px;
+  font-weight: bold;
+  font-family: "Lora", serif;
+}
+
+.categs-box {
+  // width: 20%;
+  margin: 10px 10px;
+}
+.search-categs-input {
+  width: 85%;
+}
+
+.categs-headers {
+  font-size: 15px;
+}
+
+.clear-categs {
+  margin-top: 5px;
+}
+
+.parent {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  display: grid;
+  grid-template-columns: 20% 80%;
+  grid-template-rows: 1fr;
+  gap: 0px 20px;
+  grid-template-areas: ". .";
+}
+
+.container {
+  font-family: "Roboto", sans-serif;
+  max-width: 1200px;
+  width: 100%;
+  margin: 10px 10px;
+  display: block;
+  // padding: 1rem;
+}
+
+.aboutMe a {
+  // position: absolute;
+  // margin-top: 60px;
+  // right: 0px;
+  font-size: 20px;
+  // width: 27.5%;
+  // padding: 10px;
+}
+
+.aboutMe p {
+  font-size: 15px;
+}
+
+.search-panel {
+  display: block;
+}
+
+.search-panel__filters {
+  // flex: 1;
+}
+
+.search-panel__results {
+  // background-color: aquamarine;
+  // flex: 3;
+}
+
+.ais-Highlight-highlighted {
+  color: inherit;
+  font-size: 15px;
+}
+
+#searchbox {
+  margin-bottom: 2rem;
+}
+
+#pagination {
+  margin: 2rem auto;
+  text-align: center;
+}
+.hit-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.hit-authors {
+  margin-top: 3px;
+  font-size: 0.8rem;
+}
+
+.ais-Hits-item {
+  // background-color: aquamarine;
+  // width: 95%;
+  padding: 20px;
+  box-shadow: none;
+  border: 1px solid lighten(lightgray, 8%);
+  //width: 100%;
+}
+.ais-Hits-item a {
+  font-size: 20px;
+}
+
+.ais-Hits-item p {
+  font-size: 15px;
+}
+
+.empty {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 1fr;
+  gap: 0px 20px;
+  grid-template-areas: ". .";
+  margin-left: 20%;
+}
+
+.empty-text {
+  margin-left: -450px;
+  margin-top: 100px;
+  font-weight: bold;
+  font-size: 40px;
+  font-family: "Lora", serif;
+  text-align: center;
+}
+.empty-image {
+  // margin-left: 20%;
+  height: 300px;
+  width: 300px;
+}
+
+.colors {
+  background-color: #1e2334;
+  border-color: #e4d8b4;
+  border-color: #fa4970;
+  border-color: #1e2334;
+}

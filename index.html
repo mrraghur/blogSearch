@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
+    <!-- font imports   -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora&family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <!-- font import end -->
+    <link rel="shortcut icon" href="./icon.png" />
+
+    <link rel="stylesheet" href="./src/algolia-min.css" />
+    <link rel="stylesheet" href="./src/index.css" />
+    <link rel="stylesheet" href="./src/app.scss" />
+
+    <title>Blogs Search</title>
+  </head>
+
+  <body>
+    <header class="header">
+      <h1 class="header-title">
+        <a href="/">Blog Search</a>
+      </h1>
+      <img src="./icon.svg" class="icon" />
+    </header>
+    <div class="parent">
+      <div class="categs-box">
+        <div class="filter-box">
+          <p class="categs-headers">Filter by categories</p>
+          <div id="category" class="category-checkbox"></div>
+          <div class="mt-1">&nbsp;</div>
+          <p class="categs-headers">Audience</p>
+          <div id="aud" class="category-checkbox"></div>
+          <div class="mt-1">&nbsp;</div>
+          <p class="categs-headers">Filter by reading time</p>
+          <div id="readingtime"></div>
+          <div class="mt-1">&nbsp;</div>
+          <div class="clear-categs" id="clear-categs"></div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="search-panel">
+          <div class="search-panel__results">
+            <div id="searchbox"></div>
+            <div class="aboutMe">
+              <div id="structuredResults"></div>
+            </div>
+            <div id="hits"></div>
+          </div>
+        </div>
+        <div id="pagination" class="pagination"></div>
+      </div>
+    </div>
+    <div class="empty">
+      <img src="./icon.svg" alt="icon" class="empty-image" />
+      <p class="empty-text">
+        Enter a keyword <br />
+        to search
+      </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/algoliasearch/3.32.0/algoliasearchLite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.5.0"></script>
+    <script src="./src/app.js"></script>
+  </body>
+</html>
