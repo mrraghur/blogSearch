@@ -36,6 +36,7 @@ requests_log.propagate = True
 
 
 def getAbout(u):
+    #pdb.set_trace()
     url = u + '/about/'
     if u[-1] == '/':
         url = u + 'about'
@@ -69,7 +70,7 @@ def getAbout(u):
     data_file.close()
     #Run from the same directory where code is present.
     #TODO: Make it a little more configurable.
-    command = "node addDocuments.js blogs1 /tmp/inputfile.json"
+    command = "node addDocuments.js structuredResults /tmp/inputfile.json"
     res = os.system(command)    
 
 
