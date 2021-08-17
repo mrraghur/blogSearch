@@ -55,12 +55,15 @@ A collection can be deleted using:
 ---
 
 Nginx setup:
-
+CentOS/Linux/On Linode
 - `cp blogSearchNginx.conf /etc/nginx/conf.d/blogSearchNginx.conf`
 - `sudo systemctl stop nginx`
 - `sudo systemctl start nginx`
 - `systemctl status nginx.service`
 - `setsebool -P httpd_can_network_connect 1`
+
+On Mac
+brew services start nginx
 
 ---
 
