@@ -2,10 +2,7 @@
 
 set -x
 
-#Add PWD to path so that we can easily execute typesennse-server.
-export TYPESENSE_PATH="$PWD/typesense-server"
-TYPESENSE_DATA_DIR="/tmp/typesense-data3"
-export VENVPATH="$HOME/blogsearchvenvpython3"
+source config.sh
 
 #Script to do one line install of typesense search engine and create appropriate tables
 #To be run from inside the github repo
@@ -50,5 +47,8 @@ source $VENVPATH/bin/activate
 #install nopm dependencies.
 npm i 
 
-#install python requirements for the scraper
-source libInstall.sh`
+#install python requirements for the scraper, one package at a time so that unexpected errors wont stop the whole process
+#TODO: Normally, we want atomic operations, but that takes time and effort.
+cat requirements.txt | while read LINE; do
+    pip install $LINE
+    done
