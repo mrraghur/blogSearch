@@ -206,7 +206,9 @@ class Command(BaseCommand):
                 data_file = open("/tmp/inputfile.json", 'w')
                 data_file.write(serializedData)
                 data_file.close()
-                command = "cd && cd typesense-instantsearch-demo && node addDocuments.js blogs /tmp/inputfile.json" 
+                #Run from same command line directory as code.
+                #TODO: Add a code config
+                command = "node addDocuments.js blogs /tmp/inputfile.json" 
                 res = os.system(command)
                 #if (idx >= 2):
                 #    sys.exit(10)

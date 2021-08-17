@@ -19,7 +19,9 @@ Each document for the search engine collection should follow the below Schema:
 }
 ```
 
-- `git clone https://github.com/anooj-gandham/typesense-instantsearch-demo`
+- `Download typesense-server for your platform from https://typesense.org/downloads/`
+- `Create a data directory something like /tmp/typesense-data Make sure it is not deleted on reboot`
+- `mkdir /tmp/typsense-data2`
 - `Enter into a python venv`
 - `cd blogSearch && npm i && bash libInstall.sh`
 
@@ -27,11 +29,14 @@ Each document for the search engine collection should follow the below Schema:
 
 - `node deleteSchema.js blogs && node deleteSchema.js structuredResults`
 - `node createSchemaBlogs.js && node createSchemaStructuredResults.js`
-
-- `python manage.py postToTypeSense`
+- cd substacksearchengine
+- python manager runserver
+- `python manage.py importAllSiteMaps <appropriate option>`
 - `python manage.py importAllNewsletterPosts`
+- `python manage.py postToTypeSense`
 
 ---
+  Frontend
 
 - `rm dist # If dist/ is already present`
 - `parcel build index.html`

@@ -59,7 +59,9 @@ def getAbout(url):
     data_file = open("/tmp/inputfile.json", 'w')
     data_file.write(serializedData)
     data_file.close()
-    command = "cd && cd blogSearch && node addDocuments.js structuredResults /tmp/inputfile.json"
+    #Run from the same directory as code
+    #TODO: Add a config for code directory, etc
+    command = "node addDocuments.js structuredResults /tmp/inputfile.json"
     res = os.system(command)
 
 
@@ -96,8 +98,8 @@ class Command(BaseCommand):
         sitemapObjs = sitemap.objects.all();
         #was it created just now? 
         for idx,sitemapObj in enumerate(sitemapObjs):
-            if idx < 200:
-                continue
+            #if idx < 200:
+            #    continue
             #Parse xml
             # get root element
             try:

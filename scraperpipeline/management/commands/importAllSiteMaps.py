@@ -60,14 +60,16 @@ def getAbout(u):
         }
     myarray = []
     myarray.append(mydict)
-    pdb.set_trace()
+    #pdb.set_trace()
     serializedData = json.dumps(myarray)
     #print (serializedData)
 
     data_file = open("/tmp/inputfile.json", 'w')
     data_file.write(serializedData)
     data_file.close()
-    command = "cd && cd typesense-instantsearch-demo && node addDocuments.js blogs1 /tmp/inputfile.json"
+    #Run from the same directory where code is present.
+    #TODO: Make it a little more configurable.
+    command = "node addDocuments.js blogs1 /tmp/inputfile.json"
     res = os.system(command)    
 
 
@@ -78,7 +80,7 @@ class Command(BaseCommand):
     leftovers = None
 
     def add_arguments(self, parser):
-        parser.add_argument('jsonfilesfromalgolia', nargs='+', type=str, help='json files from algolia')
+        parser.add_argument('-jsonfilesfromalgolia', nargs='+', type=str, help='json files from algolia')
         #parser.add_argument('--continueDownloading', action='store_true', help="Download MAX_NUM_ITEMS_TO_DOWNLOAD from where we left off last time")
         #parser.add_argument('--downloadArticlesFromNewsWebsites', action='store_true', help=" download content of links posted to HN")
         #parser.add_argument('--runUnitTests', action='store_true', help="Run  unit tests through database and find who are founders of what company")
