@@ -17,7 +17,6 @@ nohup typesense-server --data-dir=/tmp/typesense-data --api-key=xyz --listen-por
 
 node createSchemaBlogs.js && node createSchemaStructuredResults.js
 
-cd substacksearchengine
 
 #Build frontend
 rm -r dist # If dist/ is already present
@@ -26,6 +25,7 @@ rm -rf /var/www/blogSearch
 mv dist/ /var/www/blogSearch/
 
 
+cd substacksearchengine
 #Post new data to the search engine index
 source $VENVPATH/bin/activate
 python manage.py postToTypeSense
