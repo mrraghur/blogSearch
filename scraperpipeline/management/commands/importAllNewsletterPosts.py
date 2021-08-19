@@ -25,15 +25,23 @@ import threading
 from urllib.parse import urlparse
 import json
 import pdb
-from scraperpipeline.models import substacknewsletter, sitemap, newsletterPostUrls, newsletterscrapestatus, postsToIgnore 
+from scraperpipeline.models import substacknewsletter, sitemap, newsletterPostUrls, newsletterscrapestatus, postsToIgnore, aboutme
 
 
-def getAbout(url):
+def getAbout(url, substacknewsletterObj):
     # url = u + '/about/'
     # if u[-1] == '/':
     #     url = u + 'about'
+    aboutmeObj_get_or_create = aboutme.objects.get_or_create(url=url)
+    if (not aboutmeObj_get_or_create[1]): #Not newly created.
+        return
+    #pdb.set_trace()
     resp = get(url)
-
+    #TODO: Check for return value.
+    if resp.status_code != 200:
+        logger.error("Fetchin about me url " + url + " gave error response code os " + str(resp.status_code) + " resp=" + str(resp))
+        return
+    
     soup = BeautifulSoup(resp.text,'html.parser')
     text = ''
 
@@ -51,18 +59,26 @@ def getAbout(url):
         "text":text,
         "url":url
         }
-    myarray = []
-    myarray.append(mydict)
-    serializedData = json.dumps(myarray)
-    #print (serializedData)
 
-    data_file = open("/tmp/inputfile.json", 'w')
-    data_file.write(serializedData)
-    data_file.close()
-    #Run from the same directory as code
-    #TODO: Add a config for code directory, etc
-    command = "node addDocuments.js structuredResults /tmp/inputfile.json"
-    res = os.system(command)
+
+    aboutmeObj = aboutmeObj_get_or_create[0]
+    aboutmeObj.parentnewsletter=substacknewsletterObj
+    aboutmeObj.text = text;
+    aboutmeObj.url = url;
+    aboutmeObj.save();
+
+    #myarray = []
+    #myarray.append(mydict)
+    #serializedData = json.dumps(myarray)
+    ##print (serializedData)
+
+    #data_file = open("/tmp/inputfile.json", 'w')
+    #data_file.write(serializedData)
+    #data_file.close()
+    ##Run from the same directory as code
+    ##TODO: Add a config for code directory, etc
+    #command = "node addDocuments.js structuredResults /tmp/inputfile.json"
+    #res = os.system(command)
 
 
 logger = logging.getLogger('django')
@@ -74,9 +90,6 @@ defaultheaders = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0'
 }
 
-
-
-
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
     maxNumLines = None
@@ -85,7 +98,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         pass
-        #parser.add_argument('jsonfilesfromalgolia', nargs='+', type=str, help='json files from algolia')
+        #parser.add_argument('-jsonfilesfromalgolia', nargs='+', type=str, help='json files from algolia')
         #parser.add_argument('--continueDownloading', action='store_true', help="Download MAX_NUM_ITEMS_TO_DOWNLOAD from where we left off last time")
         #parser.add_argument('--downloadArticlesFromNewsWebsites', action='store_true', help=" download content of links posted to HN")
         #parser.add_argument('--runUnitTests', action='store_true', help="Run  unit tests through database and find who are founders of what company")
@@ -123,7 +136,7 @@ class Command(BaseCommand):
                             elif ("/about" in elem.text):
                                 #pdb.set_trace()
                                 print(elem.text)
-                                getAbout(elem.text)
+                                getAbout(elem.text, sitemapObj.parentnewsletter)
 
 
                 #Urls already in db but text not retrieved.
@@ -139,7 +152,7 @@ class Command(BaseCommand):
                         resp = requests.get(newsletterPostUrl,headers=defaultheaders)
                         logger.info("Response code is " + str(resp.status_code))
                         if resp.status_code == 200:
-                            originalText = resp.content
+                            originalText = resp.text
                             newsletterPostUrlsObj.origtext = originalText
                             newsletterPostUrlsObj.save()
                         else:
@@ -149,7 +162,7 @@ class Command(BaseCommand):
                             postsToIgnoreObj[0].url = newsletterPostUrl
                             postsToIgnoreObj[0].countOfTriesSoFar = postsToIgnoreObj[0].countOfTriesSoFar + 1
                             postsToIgnoreObj[0].errMsg = str(postsToIgnoreObj[0].errMsg) + " Could not download text. resp_code = "
-                            + str(resp.status_code) + " resp=" + resp.content
+                            + str(resp.status_code) + " resp=" + resp.text
                             postsToIgnoreObj[0].save()
 
 
@@ -171,7 +184,7 @@ class Command(BaseCommand):
                     logger.info("Response code is " + str(resp.status_code))
                     if resp.status_code == 200:
                         newsletterPostUrlsObj = newsletterPostUrls.objects.create(url=newsletterPostUrl, parentnewsletter = sitemapObj.parentnewsletter)
-                        originalText = resp.content
+                        originalText = resp.text
                         newsletterPostUrlsObj.origtext = originalText
                         newsletterPostUrlsObj.save()
                     else:
@@ -181,10 +194,8 @@ class Command(BaseCommand):
                         postsToIgnoreObj[0].url = newsletterPostUrl
                         postsToIgnoreObj[0].countOfTriesSoFar = postsToIgnoreObj[0].countOfTriesSoFar + 1
                         postsToIgnoreObj[0].errMsg = str(postsToIgnoreObj[0].errMsg) + " Could not download text. resp_code = "
-                        + str(resp.status_code) + " resp=" + resp.content
+                        + str(resp.status_code) + " resp=" + resp.text
                         postsToIgnoreObj[0].save()
-
-
 
                 print ("===")
             except Exception as e:

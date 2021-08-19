@@ -25,6 +25,21 @@ class sitemap(models.Model):
         +"parentSiteMap=" + self.parentSiteMap + "~" + "parentType=" + self.parentType
     
     
+#Aboutme page of a blog.
+class aboutme(models.Model):
+    text = models.TextField() #text of the about me page.
+    url = models.TextField(unique=True)
+    parentnewsletter = models.ForeignKey(
+            substacknewsletter,
+            on_delete=models.SET_NULL,
+            null=True); #No need to delete an aboutme page just because parent is deleted.
+    def __str__(self):
+        return "id:" + str(self.id) + "~" + "parentnewsletter=" + str(self.parentnewsletter)
+        +"url=" + self.url
+        +"text=" + self.text
+ 
+
+
 class newsletterPostUrls(models.Model):
     url = models.TextField(unique=True)
     origtext = models.TextField(null=True)

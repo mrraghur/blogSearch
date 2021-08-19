@@ -63,7 +63,13 @@ CentOS/Linux/On Linode
 - `setsebool -P httpd_can_network_connect 1`
 
 On Mac
+brew install nginx
 brew services start nginx
+
+Follow this 
+https://gist.github.com/jimothyGator/5436538
+
+
 
 ---
 

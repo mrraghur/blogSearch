@@ -26,7 +26,7 @@ import threading
 from urllib.parse import urlparse
 import json
 import pdb
-from scraperpipeline.models import substacknewsletter, sitemap, newsletterPostUrls, newsletterscrapestatus
+from scraperpipeline.models import substacknewsletter, sitemap, newsletterPostUrls, newsletterscrapestatus, aboutme
 
 
 logger = logging.getLogger('django')
@@ -35,45 +35,7 @@ requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
 
 
-def getAbout(u):
-    #pdb.set_trace()
-    url = u + '/about/'
-    if u[-1] == '/':
-        url = u + 'about'
-    resp = get(url)
-
-    soup = BeautifulSoup(resp.text,'html.parser')
-    text = ''
-    print(url)
-    dd = soup.find(class_='content-about')
-    if dd != None:
-        for d in dd:
-            text = text + d.get_text() + ' '
-    else:
-        dd = soup.find_all('p')
-        if dd != None:
-            for d in dd:
-                text = text + d.text + ' '
-
-    mydict = {
-        "text":text,
-        "url":url
-        }
-    myarray = []
-    myarray.append(mydict)
-    #pdb.set_trace()
-    serializedData = json.dumps(myarray)
-    #print (serializedData)
-
-    data_file = open("/tmp/inputfile.json", 'w')
-    data_file.write(serializedData)
-    data_file.close()
-    #Run from the same directory where code is present.
-    #TODO: Make it a little more configurable.
-    command = "node addDocuments.js structuredResults /tmp/inputfile.json"
-    res = os.system(command)    
-
-
+#From algolia results for term <>, get all substack URLs then get sitemaps and populate this db/table.
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
     maxNumLines = None
@@ -92,7 +54,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         jsonfilesfromalgolia = options['jsonfilesfromalgolia']
+        idx = 0
         for jsonfilefromalgolia in jsonfilesfromalgolia:
+            idx = idx+1
             logger.info ("file is " + jsonfilefromalgolia)
             fp = open(jsonfilefromalgolia,)
             data = json.load(fp)
@@ -103,27 +67,24 @@ class Command(BaseCommand):
                     continue
                 substackurlParseResult = urlparse(substackurl)
                 print(substackurl)
-                getAbout(substackurl)
+                #pdb.set_trace()
                 newsletterUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=substackurlParseResult)
                 sitemapUrlRaw = newsletterUrl+"/sitemap.xml"
                 sitemapUrlParseResult = urlparse(sitemapUrlRaw)
                 substacknewsletterObj = substacknewsletter.objects.get_or_create(url=newsletterUrl) 
                 if not substacknewsletterObj:
                     logger.error("object did not get created. ")
-                    pdb.set_trace()
+                    #pdb.set_trace()
                 sitemapObj = sitemap.objects.all().filter(parentnewsletter__url=newsletterUrl)
 
-
-                        #, parentType="newsletter")
                 if sitemapObj: #if it already exists, don't do anything more.
                     continue
-                #sitemapObj = sitemap.ojbects.get_or_create(parentnewsletter=substacknewsletterObj, parentType="newsletter")
-
                 logger.info ("hitting sitemap url is " + sitemapUrlParseResult.geturl())
                 #Download the sitemap file
                 resp = requests.get(sitemapUrlParseResult.geturl())
                 if (resp.status_code != 200):
                     logger.error("Response not 200. Something wrong. Dropping to pdb. Code is")
+                    logger.error("error for idx=" + str(idx))
                     logger.error (resp)
                     logger.error (str(resp.content))
                     #pdb.set_trace();
@@ -134,6 +95,12 @@ class Command(BaseCommand):
                     sitemapXml = resp.text;
                     sitemapObj.text = sitemapXml;
                     sitemapObj.save();
+                if (idx % 10 == 9):
+                    logger.info("Finished " + str(idx) + " urls so far")
+                #if (idx >= 500):
+                #    logger.info("Exiting because we reached max index. idx=" + str(idx))
+                #    sys.exit(0)
+
                 time.sleep(0.5)  
 
             
