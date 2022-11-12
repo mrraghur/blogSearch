@@ -19,10 +19,10 @@ node createSchemaBlogs.js && node createSchemaStructuredResults.js
 
 
 #Build frontend
-rm -r dist # If dist/ is already present
-parcel build index.html
-rm -rf /var/www/blogSearch/dist
-mv -f dist/ /var/www/blogSearch/
+#sudo rm -r dist # If dist/ is already present
+#parcel build index.html
+#sudo rm -rf /var/www/blogSearch/dist
+#sudo mv -f dist/ /var/www/blogSearch/
 
 
 #Post new data to the search engine index

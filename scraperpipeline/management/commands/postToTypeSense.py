@@ -31,6 +31,7 @@ from scraperpipeline.models import substacknewsletter, sitemap, newsletterPostUr
 import textstat
 from textstat import flesch_reading_ease, dale_chall_readability_score_v2,gunning_fog,smog_index,automated_readability_index
 
+from extractBlogFeatures import extractCountries, nameToCountry
 
 ##Go threw all objects in newsletterPostUrlsObjs and add them to typesense search engine.
 
@@ -130,11 +131,16 @@ class Command(BaseCommand):
         idx = 0
         #pdb.set_trace()
         #newsletterPostUrlsObjs = newsletterPostUrls.objects.all()#.filter(origtext==None)
-        for i in range(0,1300,102):
-            start = i
-            end = i+10
-            if i == 13000:
-                end = 13890
+
+        totalNumPosts = newsletterPostUrls.objects.all().count()
+        logger.info("Will be ingesting a total of " + str(totalNumPosts))
+        batchSize = 100
+        
+        for idx in range(0,totalNumPosts,batchSize):
+            start = idx
+            end = idx+batchSize
+            #if idx == 13000:
+            #    end = 13890
             # pdb.set_trace()
             newsletterPostUrlsObjs = newsletterPostUrls.objects.all()[start:end]
 
@@ -178,7 +184,12 @@ class Command(BaseCommand):
                         texts = texts + text.get_text()
 
                 cleaned_text = clean_html(texts)#(.decode('UTF-8'))
-                cleaned_text, audienceClass = getAudienceScore(cleaned_text)
+                try:
+                    cleaned_text, audienceClass = getAudienceScore(cleaned_text)
+                except Exception as e:
+                    newsletterPostUrl = newsletterPostUrlsObj.url
+                    logger.error("encountered exception. idx= " + str(idx) +  " url = " + newsletterPostUrl + " continuing to next one")
+                    continue
                 
                 audienceClassStr = "beginner"
                 if (audienceClass == 1):
@@ -187,6 +198,14 @@ class Command(BaseCommand):
                     audienceClassStr = "expert"
                 #pdb.set_trace()
                 title = bytes(title.get_text(),'utf-8').decode("unicode_escape")
+                text = texts.replace('\\','\pspk1').replace('\pspk1','');
+                countries = extractCountries(text)
+                #print ("countries is ")
+                namesAndCountries = nameToCountry(text);
+                #print (namesAndCountries)
+                #continue
+
+                #Apply nltk code and get countries in the code. 
                 mydict = {
                         'title':title,
                         "description":newsletterPostUrlsObj.url,
@@ -194,9 +213,23 @@ class Command(BaseCommand):
                         'url': newsletterPostUrlsObj.url,
                         'aud' : audienceClassStr,
                         'readingtime': random.randrange(0, 100),
+                        #'countries':countries,
                         'imgs':allimgsStr,
-                        "text" : texts.replace('\\','\pspk1').replace('\pspk1','')
+                        "text" : text #texts.replace('\\','\pspk1').replace('\pspk1','')
                         }
+                mydict["countries"] = "DEFAULTCOUNTRY"
+                mydict["names"] = "DEFAULTNAME"
+                for country in countries:
+                    mydict["countries"] = country
+                    break;
+                for nameAndCountry in namesAndCountries:
+                    #Because current quality of name to country map is bad
+                    #we will only ingest those names that have been properly
+                    #identified. This just increases (my) confidence.
+                    if (nameAndCountry[1] != "Not identified"):
+                        mydict["names"] = nameAndCountry[0]
+                        break
+
                 myarray = []
                 myarray.append(mydict)
                 serializedData = json.dumps(myarray)

@@ -81,6 +81,7 @@ const search = instantsearch({
           let element = `
         <div>
           <a href="${searchResults.hits[0].document.url}">About .....</a>
+          <p>${searchResults.hits[0].document.url}</p>
           <p>${searchResults.hits[0].highlights[0].snippet}</p>
         </div>`;
 

@@ -4,7 +4,7 @@ module.exports = (async () => {
   const client = new Typesense.Client({
     nodes: [
       {
-        host: "localhost",
+        host: "127.0.0.1",
         port: "8108",
         protocol: "http",
       },
@@ -19,6 +19,9 @@ module.exports = (async () => {
       { name: "category", type: "string", facet: true },
       { name: "url", type: "string" },
       { name: "description", type: "string" },
+      { name: "text", type: "string" },
+      { name: "names", type: "string"},
+      { name: "countries", type: "string" },
       { name: "text", type: "string" },
       { name: "readingtime", type: "int32", facet: true },
       { name: "aud", type: "string", facet: true },
